@@ -17,7 +17,7 @@ pub struct Message {
 impl Message {
     pub fn new(new_message: NewMessage, id: UserID) -> Self {
         Self {
-            from: id.0,
+            from: id.as_ref().clone(),
             to: new_message.to,
             message: new_message.message,
             date: Utc::now(),
@@ -32,6 +32,12 @@ pub struct NewMessage {
 }
 
 pub struct UserID(String);
+
+impl AsRef<String> for UserID {
+    fn as_ref(&self) -> &String {
+        &self.0
+    }
+}
 
 #[async_trait]
 impl<'r> FromRequest<'r> for UserID {
