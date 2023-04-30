@@ -3,15 +3,6 @@
 version = 3
 
 [[package]]
-name = "MicroPostService"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "rocket",
- "serde",
-]
-
-[[package]]
 name = "android_system_properties"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -229,6 +220,12 @@ dependencies = [
  "quote",
  "syn 2.0.15",
 ]
+
+[[package]]
+name = "dotenv"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "77c90badedccf4105eca100756a0b1289e191f6fcbdadd3cee1d2f614f97da8f"
 
 [[package]]
 name = "either"
@@ -651,6 +648,16 @@ name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2dffe52ecf27772e601905b7522cb4ef790d2cc203488bbd0e2fe85fcb74566d"
+
+[[package]]
+name = "micro_post_service"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "dotenv",
+ "rocket",
+ "serde",
+]
 
 [[package]]
 name = "mime"

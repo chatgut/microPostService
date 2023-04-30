@@ -25,7 +25,7 @@ impl Message {
     }
 }
 
-#[derive(Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct NewMessage {
     pub to: String,
     pub message: String,
