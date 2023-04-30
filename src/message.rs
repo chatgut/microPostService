@@ -1,10 +1,8 @@
 use chrono::{DateTime, Utc};
+use rocket::{Request};
 use rocket::http::Status;
-use rocket::Request;
 use rocket::request::{FromRequest, Outcome};
-use rocket::time::error::InvalidVariant;
 use serde::{Deserialize, Serialize};
-
 
 #[derive(Serialize, Clone, Debug)]
 pub struct Message {
@@ -41,14 +39,21 @@ impl AsRef<String> for UserID {
 
 #[async_trait]
 impl<'r> FromRequest<'r> for UserID {
-    type Error = InvalidVariant;
+    type Error = &'r str;
 
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         let user_id = request.headers().get_one("userID");
 
+
         match user_id {
-            Some(user_id) => Outcome::Success(UserID(user_id.to_string())),
-            None => Outcome::Failure((Status::Unauthorized, InvalidVariant))
+            Some(user_id) => {
+                return if !user_id.trim().is_empty() {
+                    Outcome::Success(UserID(user_id.to_string()))
+                } else {
+                    Outcome::Failure((Status::Unauthorized, "userID is empty"))
+                };
+            }
+            None => Outcome::Failure((Status::Unauthorized, "No userId in header"))
         }
     }
 }
