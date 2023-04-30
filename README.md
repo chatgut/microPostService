@@ -35,7 +35,7 @@ returns any number messages from user depending on query sorted by time and date
 "from": "userID",
 "to":"userID",
 "message":"message",
-"date":"20230101:00:00:00"}
+"date":"2023-04-30T14:46:25.719540527Z"}
 
 */health_check*  
 returns 200 to check if server is up

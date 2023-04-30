@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
-use rocket::{Request};
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome};
+use rocket::Request;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Clone, Debug)]
@@ -44,7 +44,6 @@ impl<'r> FromRequest<'r> for UserID {
     async fn from_request(request: &'r Request<'_>) -> Outcome<Self, Self::Error> {
         let user_id = request.headers().get_one("userID");
 
-
         match user_id {
             Some(user_id) => {
                 return if !user_id.trim().is_empty() {
@@ -53,9 +52,7 @@ impl<'r> FromRequest<'r> for UserID {
                     Outcome::Failure((Status::Unauthorized, "userID is empty"))
                 };
             }
-            None => Outcome::Failure((Status::Unauthorized, "No userId in header"))
+            None => Outcome::Failure((Status::Unauthorized, "No userId in header")),
         }
     }
 }
-
-

@@ -1,0 +1,2 @@
+[default.databases.postservice]
+url = "mongodb://localhost:27017"
