@@ -23,15 +23,16 @@ fn health_check() -> Status {
 }
 
 #[get("/message?<to>&<fromMessageId>&<numberOfMessages>")]
-async fn get_message(db: Connection<MessagesDatabase>, user_id: UserID, to: &str, fromMessageId: &str, numberOfMessages: i64) -> Json<Vec<Message>> { //-> Result<Json<Message>, Status> {
+async fn get_message(db: Connection<MessagesDatabase>, user_id: UserID, to: &str, fromMessageId: &str, numberOfMessages: i64) -> Result<Json<Vec<Message>>, Status> { //-> Result<Json<Message>, Status> {
 
-    let obj_id = ObjectId::parse_str(fromMessageId);
-    let filter2 = doc! { "_id": {"$gt": obj_id.unwrap()}, "from": user_id.as_ref(), "to": to };
+    let obj_id = ObjectId::parse_str(fromMessageId).expect("Error parsing ObjectID");
+    
+    let filter = doc! { "_id": {"$gt": obj_id}, "from": user_id.as_ref(), "to": to };
 
-    let find_options2 = FindOptions::builder().limit(numberOfMessages).build();
+    let options = FindOptions::builder().limit(numberOfMessages).build();
 
     let mut cursor = db.database("postservice").collection::<Message>("messages")
-        .find(filter2, find_options2).await.expect("Failed to connect to database");
+        .find(filter, options).await.expect("Failed to connect to database");
 
 
     let mut messages = vec![];
@@ -39,8 +40,10 @@ async fn get_message(db: Connection<MessagesDatabase>, user_id: UserID, to: &str
     while let Some(message) = cursor.try_next().await.expect("Failed to get message from stream") {
         messages.push(message);
     }
-
-    Json(messages)
+    if messages.is_empty() {
+        return Err(Status::NoContent);
+    }
+    Ok(Json(messages))
 }
 
 
