@@ -1,7 +1,7 @@
 #[macro_use]
 extern crate rocket;
 
-use rocket::futures::TryStreamExt;
+use rocket::futures::{TryStreamExt};
 use rocket::http::Status;
 use rocket::response::status::Created;
 use rocket::serde::json::Json;
@@ -19,6 +19,39 @@ mod message;
 #[get("/health_check")]
 fn health_check() -> Status {
     Status::Ok
+}
+
+#[get("/message/chat?<to>")]
+async fn get_chat_messages(
+    db: Connection<MessagesDatabase>,
+    user_id: UserID,
+    to: &str,
+) -> Result<Json<Vec<Message>>, Status> {
+    let filter = doc! {
+        "from": {"$in": [user_id.as_ref(), to]},
+        "to": {"$in": [user_id.as_ref(), to]}
+    };
+    let mut cursor = db
+        .database("postservice")
+        .collection("messages")
+        .find(filter, None)
+        .await
+        .expect("Failed to connect to database");
+
+    let mut messages = vec![];
+
+    while let Some(message) = cursor
+        .try_next()
+        .await
+        .expect("Failed to get message from stream")
+    {
+        messages.push(message);
+    }
+
+    if messages.is_empty() {
+        return Err(Status::NoContent);
+    }
+    Ok(Json(messages))
 }
 
 #[get("/message?<to>&<fromMessageId>&<numberOfMessages>")]
@@ -104,7 +137,13 @@ async fn new_message(
 fn rocket() -> _ {
     rocket::build().attach(MessagesDatabase::init()).mount(
         "/",
-        routes![health_check, new_message, get_by_id, get_message],
+        routes![
+            health_check,
+            new_message,
+            get_by_id,
+            get_message,
+            get_chat_messages
+        ],
     )
 }
 
