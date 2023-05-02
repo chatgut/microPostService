@@ -1,12 +1,15 @@
 #[macro_use]
 extern crate rocket;
 
+use std::ptr::copy_nonoverlapping;
+use rocket::futures::TryStreamExt;
 use rocket::http::Status;
 use rocket::response::status::Created;
 use rocket::serde::json::Json;
 use rocket_db_pools::{Connection, Database};
 use rocket_db_pools::mongodb::bson::doc;
 use rocket_db_pools::mongodb::bson::oid::ObjectId;
+use rocket_db_pools::mongodb::options::FindOptions;
 
 use crate::db_connection::MessagesDatabase;
 use crate::message::{Message, NewMessage, UserID};
@@ -18,6 +21,28 @@ mod message;
 fn health_check() -> Status {
     Status::Ok
 }
+
+#[get("/message?<to>&<fromMessageId>&<numberOfMessages>")]
+async fn get_message(db: Connection<MessagesDatabase>, user_id: UserID, to: &str, fromMessageId: &str, numberOfMessages: i64) -> Json<Vec<Message>> { //-> Result<Json<Message>, Status> {
+
+    let obj_id = ObjectId::parse_str(fromMessageId);
+    let filter2 = doc! { "_id": {"$gt": obj_id.unwrap()}, "from": user_id.as_ref(), "to": to };
+
+    let find_options2 = FindOptions::builder().limit(numberOfMessages).build();
+
+    let mut cursor = db.database("postservice").collection::<Message>("messages")
+        .find(filter2, find_options2).await.expect("Failed to connect to database");
+
+
+    let mut messages = vec![];
+
+    while let Some(message) = cursor.try_next().await.expect("Failed to get message from stream") {
+        messages.push(message);
+    }
+
+    Json(messages)
+}
+
 
 #[get("/message/<id>")]
 async fn get_by_id(db: Connection<MessagesDatabase>, id: &str) -> Result<Json<Message>, Status> {
@@ -58,7 +83,7 @@ async fn new_message(
 fn rocket() -> _ {
     rocket::build()
         .attach(MessagesDatabase::init())
-        .mount("/", routes![health_check, new_message,get_by_id])
+        .mount("/", routes![health_check, new_message,get_by_id,get_message])
 }
 
 #[cfg(test)]
