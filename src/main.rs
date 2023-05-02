@@ -1,15 +1,12 @@
 #[macro_use]
 extern crate rocket;
 
-use rocket::futures::{TryFutureExt, TryStreamExt};
 use rocket::http::Status;
-use rocket::response::status::{Created, NoContent};
+use rocket::response::status::Created;
 use rocket::serde::json::Json;
 use rocket_db_pools::{Connection, Database};
-
 use rocket_db_pools::mongodb::bson::doc;
 use rocket_db_pools::mongodb::bson::oid::ObjectId;
-use rocket_db_pools::mongodb::error::Error;
 
 use crate::db_connection::MessagesDatabase;
 use crate::message::{Message, NewMessage, UserID};
@@ -24,23 +21,21 @@ fn health_check() -> Status {
 
 #[get("/message/<id>")]
 async fn get_by_id(db: Connection<MessagesDatabase>, id: &str) -> Result<Json<Message>, Status> {
-    if id.trim().is_empty() {
-        return Err(Status::BadRequest);
-    }
     let obj_id = ObjectId::parse_str(id);
+
+    match obj_id {
+        Ok(obj_id) => obj_id,
+        Err(_) => return Err(Status::NoContent),
+    };
 
     let message = db.database("postservice").collection("messages")
         .find_one(doc! {"_id": obj_id.unwrap()}
                   , None).await;
     match message {
-        Ok(message) => Ok(Json(message.expect("NOt found "))),
+        Ok(message) => Ok(Json(message.expect("Message not found"))),
         Err(_) => Err(Status::NoContent),
     }
 }
-
-
-// Json(message.unwrap())
-
 
 #[post("/newmessage", format = "json", data = "<new_message>")]
 async fn new_message(
