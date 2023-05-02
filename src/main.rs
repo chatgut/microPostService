@@ -44,17 +44,14 @@ async fn new_message(
     user_id: UserID,
 ) -> Result<Created<Json<Message>>, Status> {
     let message = Message::new(new_message.into_inner(), user_id);
-    let messclone = message.clone();
-    db.database("postservice")
+    let added_message = db.database("postservice")
         .collection("messages")
         .insert_one(message, None)
         .await
-        .expect("TODO: panic message");
-
+        .expect("Unable to insert message");
     //TODO to and message cannot be empty
 
-    println!("{:?}", messclone);
-    Ok(Created::new("").body(Json(messclone)))
+    Ok(Created::new(format!("/message/{}", added_message.inserted_id.as_object_id().unwrap())))
 }
 
 #[launch]
