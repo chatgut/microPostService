@@ -1,6 +1,6 @@
 [default.databases.postservice]
 url = "mongodb://localhost:27017"
-
+## ROCKET_DATABASES='{postservice={url="mongodb://localhost:27017"}}'
 
 [default]
 log_level = "normal"

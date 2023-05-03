@@ -35,6 +35,12 @@ pub async fn new_message(
 mod test {
     use rocket::http::{Header, Status};
     use rocket::local::blocking::Client;
+    use testcontainers::{clients};
+    use testcontainers::images::mongo::Mongo;
+
+    use crate::endpoints::helpers;
+
+
 
     use crate::models::new_message::NewMessage;
     use crate::rocket;
@@ -70,13 +76,19 @@ mod test {
         assert_eq!(response.status(), Status::Unauthorized)
     }
 
-    //TODO fix test
-    // #[test]
-    // fn new_message_return_created() {
-    //     let client = Client::tracked(rocket()).expect("valid rocket instance");
-    //     let message = NewMessage { to: 2.to_string(), message: "Test".to_string() };
-    //
-    //     let response = client.post(uri!(super::new_message))
-    //         .json(&message).header(Header::new("userID", "1")).dispatch();
-    //     assert_eq!(response.status(), Status::Created)
+
+    #[test]
+    fn new_message_return_created() {
+        let docker = clients::Cli::docker();
+        let node = docker.run(Mongo);
+
+        let mongo_port = node.get_host_port_ipv4(27017);
+        let server = helpers::create_test_rocket(mongo_port);
+
+        let message = NewMessage { to: 2.to_string(), message: "Test".to_string() };
+
+        let response = server.post(uri!(super::new_message))
+            .json(&message).header(Header::new("userID", "1")).dispatch();
+        assert_eq!(response.status(), Status::Created)
+    }
 }

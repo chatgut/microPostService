@@ -11,9 +11,10 @@ rocket = { version = "0.5.0-rc.3", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 chrono = { version = "0.4.24", features = ["serde"] }
 rocket_db_pools = { version = "0.1.0-rc.3", features = ["mongodb"] }
-
+testcontainers = "0.14.0"
 
 
 
 [dev-dependencies]
 dotenv = "0.15.0"
+
