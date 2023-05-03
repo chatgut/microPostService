@@ -1,19 +1,13 @@
 #[macro_use]
 extern crate rocket;
 
+use micro_post_service::db_connection::MessagesDatabase;
+use micro_post_service::endpoints::chat::get_chat_messages;
+use micro_post_service::endpoints::get_by_id::get_by_id;
+use micro_post_service::endpoints::get_message::get_message;
+use micro_post_service::endpoints::health_check::health_check;
+use micro_post_service::endpoints::new_message::new_message;
 use rocket_db_pools::Database;
-
-use crate::db_connection::MessagesDatabase;
-
-use endpoints::chat::get_chat_messages;
-use endpoints::get_by_id::get_by_id;
-use endpoints::get_message::get_message;
-use endpoints::health_check::health_check;
-use endpoints::new_message::new_message;
-
-mod db_connection;
-mod endpoints;
-mod models;
 
 #[launch]
 pub fn rocket() -> _ {

@@ -1,8 +1,8 @@
+use crate::models::new_message::NewMessage;
+use crate::models::user_id::UserID;
 use chrono::{DateTime, Utc};
 use rocket_db_pools::mongodb::bson::oid::ObjectId;
 use serde::{Deserialize, Serialize};
-use crate::models::new_message::NewMessage;
-use crate::models::user_id::UserID;
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Message {
