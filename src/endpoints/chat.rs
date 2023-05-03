@@ -1,10 +1,11 @@
 use crate::db_connection::MessagesDatabase;
-use crate::message::{Message, UserID};
 use rocket::futures::TryStreamExt;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 use rocket_db_pools::mongodb::bson::doc;
 use rocket_db_pools::Connection;
+use crate::models::message::Message;
+use crate::models::user_id::UserID;
 
 #[get("/chat?<to>")]
 pub async fn get_chat_messages(

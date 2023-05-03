@@ -1,10 +1,10 @@
 use crate::db_connection::MessagesDatabase;
-use crate::message::Message;
 use rocket::http::Status;
 use rocket::serde::json::Json;
 use rocket_db_pools::mongodb::bson::doc;
 use rocket_db_pools::mongodb::bson::oid::ObjectId;
 use rocket_db_pools::Connection;
+use crate::models::message::Message;
 
 #[get("/message/<id>")]
 pub async fn get_by_id(

@@ -4,8 +4,11 @@ use rocket::response::status::Created;
 use rocket_db_pools::Connection;
 
 use rocket::serde::json::Json;
+use crate::models::message::Message;
 
-use crate::message::{Message, NewMessage, UserID};
+
+use crate::models::new_message::NewMessage;
+use crate::models::user_id::UserID;
 
 #[post("/newmessage", format = "json", data = "<new_message>")]
 pub async fn new_message(
@@ -33,7 +36,7 @@ mod test {
     use rocket::http::{Header, Status};
     use rocket::local::blocking::Client;
 
-    use crate::message::NewMessage;
+    use crate::models::new_message::NewMessage;
     use crate::rocket;
 
     #[test]

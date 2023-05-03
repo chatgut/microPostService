@@ -13,7 +13,7 @@ use endpoints::new_message::new_message;
 
 mod db_connection;
 mod endpoints;
-mod message;
+mod models;
 
 #[launch]
 pub fn rocket() -> _ {
