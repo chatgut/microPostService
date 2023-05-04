@@ -1,6 +1,8 @@
 mod common;
 
-use crate::common::helpers::{create_test_rocket, insert_test_message_to_user_id_2, test_message_user_id_2};
+use crate::common::helpers::{
+    create_test_rocket, insert_test_message_to_user_id_2, test_message_user_id_2,
+};
 use micro_post_service::endpoints::new_message::rocket_uri_macro_new_message;
 use rocket::http::{Header, Status};
 use rocket::uri;
