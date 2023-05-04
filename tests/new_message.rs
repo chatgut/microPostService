@@ -12,14 +12,14 @@ mod test {
 
     #[test]
     fn new_message_return_with_empty_user_id_returns_401() {
-        let client = create_test_rocket(123);
+        let server = create_test_rocket(123);
 
         let message = NewMessage {
             to: 2.to_string(),
             message: "Test".to_string(),
         };
 
-        let response = client
+        let response = server
             .post(uri!(new_message))
             .header(Header::new("userID", " "))
             .json(&message)
@@ -29,18 +29,18 @@ mod test {
 
     #[test]
     fn new_message_return_without_user_id_returns_401() {
-        let client = create_test_rocket(123);
+        let server = create_test_rocket(123);
         let message = NewMessage {
             to: 2.to_string(),
             message: "Test".to_string(),
         };
 
-        let response = client.post(uri!(new_message)).json(&message).dispatch();
+        let response = server.post(uri!(new_message)).json(&message).dispatch();
         assert_eq!(response.status(), Status::Unauthorized)
     }
 
     #[test]
-    fn new_message_return_created() {
+    fn new_message_return_created_and_message_exist_in_database() {
         let docker = clients::Cli::docker();
         let node = docker.run(Mongo);
 
@@ -57,6 +57,12 @@ mod test {
             .json(&message)
             .header(Header::new("userID", "1"))
             .dispatch();
-        assert_eq!(response.status(), Status::Created)
+        let check_db = server
+            .get("/chat?to=2")
+            .header(Header::new("userID", "1"))
+            .dispatch();
+
+        assert_eq!(response.status(), Status::Created);
+        assert_eq!(check_db.status(), Status::Ok);
     }
 }
