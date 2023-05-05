@@ -7,7 +7,6 @@ use rocket_db_pools::{Config, Database};
 
 use micro_post_service::endpoints::chat::get_chat_messages;
 use micro_post_service::endpoints::get_by_id::get_by_id;
-use micro_post_service::endpoints::get_message::get_message;
 use micro_post_service::endpoints::health_check::health_check;
 use micro_post_service::endpoints::new_message::new_message;
 use micro_post_service::models::new_message::NewMessage;
@@ -28,13 +27,7 @@ pub fn create_test_rocket(db_port: u16) -> Client {
         .attach(MessagesDatabase::init())
         .mount(
             "/",
-            routes![
-                health_check,
-                new_message,
-                get_by_id,
-                get_message,
-                get_chat_messages
-            ],
+            routes![health_check, new_message, get_by_id, get_chat_messages],
         );
 
     Client::tracked(rocket).expect("valid rocket instance")
