@@ -43,16 +43,20 @@ returns 200 to check if server is up
 */chat?to="user_id"*
 
 * Header must include sender userID.
-* Returns a Json with all messages from the userID in header to the user_id in the query.
+* Returns all messages from the userID in header to the user_id in the query as Json sorted by date.
 
-_/message?to="user_id"&fromMessageId="message_id"&numberOfMessages="quantity"_
 
-* Header must include sender userID.
-* Returns any number messages from userID in header to user_id greater then the message_id in the query.
-example:  
+**Optional query parameters for chat**
+* _limit="number"_  
+Limits the number of messages returned
+* _messageId="the id of a message"_  
+Sets the starting point where to return messages. Any messages with an id greater than the set id will be returned. 
+
+
+**Example:**  
 say i have a header with userID 1 and make a get request as follows:  
-  _/message?to=2&fromMessageId=645294e0863e17b5543a0384&numberOfMessages=3_  
-This will return 3 json messages that was made from userID 1 to userID 2 newer than the message in the message_id query. 
+  _/chat?to=2&messageId=645294e0863e17b5543a0384&limit=3_  
+This will return 3 json messages that was made from userID 1 to userID 2 newer than the message in the messageId query. 
 
 ---
 **Settings**
