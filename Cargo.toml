@@ -14,7 +14,6 @@ rocket_db_pools = { version = "0.1.0-rc.3", features = ["mongodb"] }
 
 
 
-
 [dev-dependencies]
 dotenv = "0.15.0"
 testcontainers = "0.14.0"

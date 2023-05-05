@@ -1,6 +1,7 @@
 use rocket::request::FromParam;
 use rocket_db_pools::mongodb::bson::oid::ObjectId;
 
+
 pub struct MessageId(ObjectId);
 
 impl AsRef<ObjectId> for MessageId {
