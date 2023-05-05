@@ -12,11 +12,6 @@ use rocket_db_pools::Database;
 pub fn rocket() -> _ {
     rocket::build().attach(MessagesDatabase::init()).mount(
         "/",
-        routes![
-            health_check,
-            new_message,
-            get_by_id,
-            get_chat_messages
-        ],
+        routes![health_check, new_message, get_by_id, get_chat_messages],
     )
 }

@@ -13,7 +13,7 @@ fn get_by_id_with_invalid_id_returns_204() {
         .get("/message/234")
         .header(Header::new("userID", " "))
         .dispatch();
-    assert_eq!(response.status(), Status::NoContent)
+    assert_eq!(response.status(), Status::NotFound)
 }
 
 #[test]

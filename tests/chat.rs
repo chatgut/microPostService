@@ -67,4 +67,3 @@ fn chat_with_invalid_query_returns_404() {
         .dispatch();
     assert_eq!(response.status(), Status::NotFound)
 }
-

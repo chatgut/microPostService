@@ -27,12 +27,7 @@ pub fn create_test_rocket(db_port: u16) -> Client {
         .attach(MessagesDatabase::init())
         .mount(
             "/",
-            routes![
-                health_check,
-                new_message,
-                get_by_id,
-                get_chat_messages
-            ],
+            routes![health_check, new_message, get_by_id, get_chat_messages],
         );
 
     Client::tracked(rocket).expect("valid rocket instance")
