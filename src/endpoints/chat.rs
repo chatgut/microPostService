@@ -17,6 +17,7 @@ pub async fn get_chat_messages(
     messageId: Option<&str>,
     limit: Option<i64>,
 ) -> Result<Json<Vec<Message>>, Status> {
+
     let filter = get_filter(user_id, to, messageId);
     let options = get_options(limit);
     let messages = get_messages(db, filter, options).await;
