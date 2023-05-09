@@ -9,7 +9,7 @@ use rocket_db_pools::mongodb::bson::{doc, Document};
 use rocket_db_pools::mongodb::options::FindOptions;
 use rocket_db_pools::Connection;
 
-#[get("/chat?<to>&<messageId>&<limit>")]
+#[get("/post?<to>&<messageId>&<limit>")]
 pub async fn get_chat_messages(
     db: Connection<MessagesDatabase>,
     user_id: UserID,
