@@ -1,5 +1,9 @@
 use lapin::{ConnectionProperties, Connection, Queue, types::FieldTable, BasicProperties, Channel};
 use lapin::options::*;
+use rocket::serde::json;
+use rocket::serde::json::Json;
+use rocket::serde::json::serde_json::json;
+use crate::models::message::Message;
 
 pub struct RabbitConnection(pub Connection);
 
@@ -21,11 +25,11 @@ impl RabbitConnection {
             .await.expect("Could not create queue")
     }
 
-   pub async fn publish_message(rabbit: &Channel) {
+   pub async fn publish_message(rabbit: &Channel, message: &Message) {
         rabbit.basic_publish("",
                              "messages",
                              BasicPublishOptions::default(),
-                             "hellorabbit".as_ref(),
+                             json::serde_json::to_string_pretty(&message).unwrap().as_bytes(),
                              BasicProperties::default(), ).await.expect("Failed to publish").await.expect("Npe");
     }
 
