@@ -21,9 +21,6 @@ pub async fn get_chat_messages(
     let options = get_options(limit);
     let messages = get_messages(db, filter, options).await;
 
-    // if messages.is_empty() {
-    //     return Err(Status::NoContent);
-    // }
     Ok(Json(messages))
 }
 
