@@ -10,7 +10,7 @@ Saves to MongoDB.
 ---
 **POST:** 
 
-*/newmessage*
+*/post*
 - Except Json in the format;   
 {  
 "to": "userID",  
@@ -28,7 +28,7 @@ _example header: userID 123_
 returns 200 to check if server is up
 
 
-*/message/"id"*
+*/post/"id"*
 * Return a Json if the requested id:
 * {  
   "_id": {  
@@ -40,7 +40,7 @@ returns 200 to check if server is up
   "date": "2023-05-04T07:14:10.392574957Z"  
   }
 
-*/chat?to="user_id"*
+*/post?to="user_id"*
 
 * Header must include sender userID.
 * Returns all messages from the userID in header to the user_id in the query as Json sorted by date.
@@ -55,7 +55,7 @@ Sets the starting point where to return messages. Any messages with an id greate
 
 **Example:**  
 say i have a header with userID 1 and make a get request as follows:  
-  _/chat?to=2&messageId=645294e0863e17b5543a0384&limit=3_  
+  _/post?to=2&messageId=645294e0863e17b5543a0384&limit=3_  
 This will return 3 json messages that was made from userID 1 to userID 2 newer than the message in the messageId query. 
 
 ---
