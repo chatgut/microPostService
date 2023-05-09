@@ -1,6 +1,6 @@
 [package]
 name = "micro_post_service"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Oliver Säfström <safstrom.oliver@gmail.com>"]
 edition = "2021"
 
