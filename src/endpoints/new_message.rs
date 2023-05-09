@@ -9,7 +9,7 @@ use rocket::serde::json::Json;
 use crate::models::new_message::NewMessage;
 use crate::models::user_id::UserID;
 
-#[post("/newmessage", format = "json", data = "<new_message>")]
+#[post("/post", format = "json", data = "<new_message>")]
 pub async fn new_message(
     db: Connection<MessagesDatabase>,
     new_message: Json<NewMessage>,
@@ -25,7 +25,7 @@ pub async fn new_message(
     //TODO to and message cannot be empty
 
     Ok(Created::new(format!(
-        "/message/{}",
+        "/post/{}",
         added_message.inserted_id.as_object_id().unwrap()
     )))
 }

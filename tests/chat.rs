@@ -9,7 +9,7 @@ use testcontainers::images::mongo::Mongo;
 fn get_on_chat_with_empty_user_id_returns_401() {
     let server = create_test_rocket(123);
     let response = server
-        .get("/chat?to=2")
+        .get("/post?to=2")
         .header(Header::new("userID", " "))
         .dispatch();
     assert_eq!(response.status(), Status::Unauthorized)
@@ -18,7 +18,7 @@ fn get_on_chat_with_empty_user_id_returns_401() {
 #[test]
 fn get_on_chat_without_user_id_returns_401() {
     let server = create_test_rocket(123);
-    let response = server.get("/chat?to=2").dispatch();
+    let response = server.get("/post?to=2").dispatch();
     assert_eq!(response.status(), Status::Unauthorized)
 }
 
@@ -40,11 +40,11 @@ fn chat_returns_200_when_getting_inserted_messages_with_query() {
         .next()
         .expect("Response didnt return location header");
 
-    let split_header: Vec<&str> = first_message_header.split("/message/").collect();
+    let split_header: Vec<&str> = first_message_header.split("/post/").collect();
 
     let get_message = server
         .get(format!(
-            "/chat?to=2&messageId={}&limit=2",
+            "/post?to=2&messageId={}&limit=2",
             split_header.get(1).expect("There was no ID in header")
         ))
         .header(Header::new("userID", "1"))
@@ -62,7 +62,7 @@ fn chat_with_invalid_query_returns_404() {
     let server = create_test_rocket(123);
 
     let response = server
-        .get("/chat?to234124")
+        .get("/post?to234124")
         .header(Header::new("userID", "1"))
         .dispatch();
     assert_eq!(response.status(), Status::NotFound)
