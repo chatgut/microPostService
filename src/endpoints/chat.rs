@@ -21,9 +21,9 @@ pub async fn get_chat_messages(
     let options = get_options(limit);
     let messages = get_messages(db, filter, options).await;
 
-    if messages.is_empty() {
-        return Err(Status::NoContent);
-    }
+    // if messages.is_empty() {
+    //     return Err(Status::NoContent);
+    // }
     Ok(Json(messages))
 }
 
@@ -55,8 +55,8 @@ fn get_filter(user_id: UserID, to: &str, messageId: Option<&str>) -> Document {
     let filter = match messageId {
         None => {
             doc! {
-            "from": {"$in": [user_id.as_ref(), to]},
-            "to": {"$in": [user_id.as_ref(), to]}}
+            "from": {"$in": [user_id.as_ref()]},
+            "to": {"$in": [to]}}
         }
 
         Some(messageId) => {
