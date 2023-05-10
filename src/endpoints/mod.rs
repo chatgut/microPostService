@@ -1,4 +1,4 @@
-pub mod chat;
+pub mod get_chat;
 pub mod conversations;
 pub mod get_by_id;
 pub mod health_check;
