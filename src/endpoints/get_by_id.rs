@@ -6,7 +6,7 @@ use rocket::serde::json::Json;
 use rocket_db_pools::mongodb::bson::doc;
 use rocket_db_pools::Connection;
 
-#[get("/post/<id>")]
+#[get("/posts/<id>")]
 pub async fn get_by_id(
     db: Connection<MessagesDatabase>,
     id: MessageId,

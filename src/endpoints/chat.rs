@@ -9,7 +9,7 @@ use rocket_db_pools::mongodb::bson::{doc, Document};
 use rocket_db_pools::mongodb::options::FindOptions;
 use rocket_db_pools::Connection;
 
-#[get("/post?<to>&<messageId>&<limit>")]
+#[get("/posts?<to>&<messageId>&<limit>")]
 pub async fn get_chat_messages(
     db: Connection<MessagesDatabase>,
     user_id: UserID,
@@ -52,8 +52,8 @@ fn get_filter(user_id: UserID, to: &str, messageId: Option<&str>) -> Document {
     let filter = match messageId {
         None => {
             doc! {
-            "from": {"$in": [user_id.as_ref()]},
-            "to": {"$in": [to]}}
+            "from": {"$in": [user_id.as_ref(), to]},
+            "to": {"$in": [to, user_id.as_ref()]}}
         }
 
         Some(messageId) => {

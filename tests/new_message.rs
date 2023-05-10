@@ -42,7 +42,7 @@ fn new_message_return_created_and_message_exist_in_database() {
 
     let insert_response = insert_test_message_to_user_id_2(&server);
     let check_db = server
-        .get("/post?to=2")
+        .get("/posts?to=2")
         .header(Header::new("userID", "1"))
         .dispatch();
 

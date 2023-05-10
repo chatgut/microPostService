@@ -10,7 +10,7 @@ fn get_by_id_with_invalid_id_returns_204() {
     let server = create_test_rocket(123);
 
     let response = server
-        .get("/post/234")
+        .get("/posts/234")
         .header(Header::new("userID", " "))
         .dispatch();
     assert_eq!(response.status(), Status::NotFound)
