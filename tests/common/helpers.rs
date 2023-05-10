@@ -6,6 +6,7 @@ use rocket::{routes, uri};
 use rocket_db_pools::{Config, Database};
 
 use micro_post_service::endpoints::chat::get_chat_messages;
+use micro_post_service::endpoints::conversations::get_conversations;
 use micro_post_service::endpoints::get_by_id::get_by_id;
 use micro_post_service::endpoints::health_check::health_check;
 use micro_post_service::endpoints::new_message::new_message;
@@ -27,25 +28,31 @@ pub fn create_test_rocket(db_port: u16) -> Client {
         .attach(MessagesDatabase::init())
         .mount(
             "/",
-            routes![health_check, new_message, get_by_id, get_chat_messages],
+            routes![
+                health_check,
+                new_message,
+                get_by_id,
+                get_chat_messages,
+                get_conversations
+            ],
         );
 
     Client::tracked(rocket).expect("valid rocket instance")
 }
 
-pub fn insert_test_message_to_user_id_2(server: &Client) -> LocalResponse {
-    let test_message = test_message_user_id_2();
+pub fn insert_test_message(server: &Client, from: String, to: String) -> LocalResponse {
+    let test_message = test_message(to);
 
     server
         .post(uri!(new_message))
         .json(&test_message)
-        .header(Header::new("userID", "1"))
+        .header(Header::new("userID", from))
         .dispatch()
 }
 
-pub fn test_message_user_id_2() -> NewMessage {
+pub fn test_message(to: String) -> NewMessage {
     NewMessage {
-        to: 2.to_string(),
+        to,
         message: "Test message".to_string(),
     }
 }

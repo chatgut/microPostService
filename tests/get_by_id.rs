@@ -1,4 +1,4 @@
-use crate::common::helpers::{create_test_rocket, insert_test_message_to_user_id_2};
+use crate::common::helpers::{create_test_rocket, insert_test_message};
 use rocket::http::{Header, Status};
 use testcontainers::clients;
 use testcontainers::images::mongo::Mongo;
@@ -24,7 +24,7 @@ fn get_by_id_with_valid_id_returns_200() {
     let mongo_port = node.get_host_port_ipv4(27017);
     let server = create_test_rocket(mongo_port);
 
-    let insert_response = insert_test_message_to_user_id_2(&server);
+    let insert_response = insert_test_message(&server, 2.to_string(), 1.to_string());
     let id = insert_response
         .headers()
         .get("location")

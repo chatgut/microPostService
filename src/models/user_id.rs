@@ -3,7 +3,7 @@ use rocket::request::{FromRequest, Outcome};
 use rocket::Request;
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq)]
 pub struct UserID(String);
 
 impl AsRef<String> for UserID {
@@ -29,5 +29,11 @@ impl<'r> FromRequest<'r> for UserID {
             }
             None => Outcome::Failure((Status::Unauthorized, "No userId in header")),
         }
+    }
+}
+
+impl UserID {
+    pub fn new(id: String) -> Self {
+        Self { 0: id }
     }
 }
