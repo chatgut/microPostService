@@ -1,5 +1,6 @@
 use lapin::{ConnectionProperties, Connection, Queue, types::FieldTable, BasicProperties, Channel};
 use lapin::options::*;
+use rocket::{Config, Rocket};
 use rocket::serde::json;
 use crate::models::message::Message;
 
@@ -11,7 +12,7 @@ pub struct RabbitConnection {
 
 impl RabbitConnection {
     pub async fn init() -> RabbitConnection {
-        let connection = Connection::connect("amqp://localhost:5672",
+        let connection = Connection::connect(&std::env::var("ROCKET_RABBIT_HOST").unwrap_or_else(|_| "amqp://localhost:5672".into()),
                                              ConnectionProperties::default())
             .await.expect("Could not connect to RabbitMQ");
         let channel = connection.create_channel().await.expect("Could not create channel");
@@ -29,12 +30,17 @@ impl RabbitConnection {
             FieldTable::default(), )
             .await.expect("Could not create queue")
     }
+    pub async fn reconnect(&mut self) {
+        self.connection = Connection::connect("amqp://localhost:5672",
+                                              ConnectionProperties::default())
+            .await.expect("Could not connect to RabbitMQ");
+    }
 
-    pub async fn publish_message(rabbit: &Channel, message: &Message) {
-        rabbit.basic_publish("",
-                             "messages",
-                             BasicPublishOptions::default(),
-                             json::serde_json::to_string_pretty(&message).unwrap().as_bytes(),
-                             BasicProperties::default(), ).await.expect("Failed to publish");
+    pub async fn publish_message(rabbit: &RabbitConnection, message: &Message) {
+        rabbit.channel.basic_publish("",
+                                     "messages",
+                                     BasicPublishOptions::default(),
+                                     json::serde_json::to_string(&message).unwrap().as_bytes(),
+                                     BasicProperties::default(), ).await.expect("Failed to publish");
     }
 }

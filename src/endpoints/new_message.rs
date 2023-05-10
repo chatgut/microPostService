@@ -31,7 +31,9 @@ pub async fn new_message(
 
 
     //TODO Check connection and reconnect
-    RabbitConnection::publish_message(&rabbitmq.channel, &message).await;
+    if rabbitmq.connection.status().connected() {
+        RabbitConnection::publish_message(&rabbitmq, &message).await;
+    } else { println!("Unable to publish message, RabbitMQ not connected") }
 
     Ok(Created::new(format!(
         "/posts/{}",

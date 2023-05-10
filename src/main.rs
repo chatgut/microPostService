@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate rocket;
 
+use dotenv::dotenv;
 use micro_post_service::db_connection::MessagesDatabase;
 use micro_post_service::endpoints::chat::get_chat_messages;
 use micro_post_service::endpoints::conversations::get_conversations;
@@ -13,8 +14,7 @@ use micro_post_service::connections::rabbitmq::RabbitConnection;
 
 #[launch]
 pub async fn rocket() -> _ {
-
-
+    dotenv().ok();
 
     rocket::build()
         .attach(MessagesDatabase::init())
