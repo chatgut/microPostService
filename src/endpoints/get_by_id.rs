@@ -1,4 +1,4 @@
-use crate::db_connection::MessagesDatabase;
+use crate::connections::db_connection::MessagesDatabase;
 use crate::models::message::Message;
 use crate::models::object_id::MessageId;
 use rocket::http::Status;

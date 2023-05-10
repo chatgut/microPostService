@@ -1,5 +1,5 @@
 use micro_post_service::connections::rabbitmq::RabbitConnection;
-use micro_post_service::db_connection::MessagesDatabase;
+use micro_post_service::connections::db_connection::MessagesDatabase;
 use micro_post_service::endpoints::new_message::rocket_uri_macro_new_message;
 use rocket::http::Header;
 use rocket::local::asynchronous::{Client, LocalResponse};

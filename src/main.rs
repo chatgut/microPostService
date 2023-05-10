@@ -3,7 +3,7 @@ extern crate rocket;
 
 use dotenv::dotenv;
 use micro_post_service::connections::rabbitmq::RabbitConnection;
-use micro_post_service::db_connection::MessagesDatabase;
+use micro_post_service::connections::db_connection::MessagesDatabase;
 use micro_post_service::endpoints::chat::get_chat_messages;
 use micro_post_service::endpoints::conversations::get_conversations;
 use micro_post_service::endpoints::get_by_id::get_by_id;

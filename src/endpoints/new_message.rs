@@ -1,4 +1,4 @@
-use crate::db_connection::MessagesDatabase;
+use crate::connections::db_connection::MessagesDatabase;
 use rocket::http::Status;
 use rocket::response::status::Created;
 use rocket_db_pools::Connection;

@@ -1,4 +1,4 @@
-use crate::db_connection::MessagesDatabase;
+use crate::connections::db_connection::MessagesDatabase;
 use crate::models::message::Message;
 use crate::models::user_id::UserID;
 use rocket::futures::TryStreamExt;
