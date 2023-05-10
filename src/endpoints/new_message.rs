@@ -3,10 +3,10 @@ use rocket::http::Status;
 use rocket::response::status::Created;
 use rocket_db_pools::Connection;
 
+use crate::connections::rabbitmq::RabbitConnection;
 use crate::models::message::Message;
 use rocket::serde::json::Json;
 use rocket::State;
-use crate::connections::rabbitmq::RabbitConnection;
 
 use crate::models::new_message::NewMessage;
 use crate::models::user_id::UserID;
@@ -29,11 +29,12 @@ pub async fn new_message(
 
     message.id = added_message.inserted_id.as_object_id();
 
-
     //TODO Check connection and reconnect
     if rabbitmq.connection.status().connected() {
         RabbitConnection::publish_message(&rabbitmq, &message).await;
-    } else { println!("Unable to publish message, RabbitMQ not connected") }
+    } else {
+        println!("Unable to publish message, RabbitMQ not connected")
+    }
 
     Ok(Created::new(format!(
         "/posts/{}",
