@@ -1,7 +1,9 @@
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome};
 use rocket::Request;
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct UserID(String);
 
 impl AsRef<String> for UserID {
