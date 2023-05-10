@@ -21,6 +21,7 @@ Saves to MongoDB.
 - Header must include sender userID .
   _example header: userID 123_
 - Will return a location header with the url to the message.
+- Sends the message to RabbitMQ queue called "messages"
 
 ---
 **GET:**
@@ -71,6 +72,11 @@ This will return 3 json messages that was made from userID 1 to userID 2 newer t
 ROCKET_DATABASES='{postservice={url="mongodb://<MONGOURL:27017>"}}'  
 Replace "MONGOURL" with the connection string to your database.  
 The app will save to a database called postservice and a collection called messages
+
+
+ROCKET_RABBIT_HOST="amqp://localhost:5672" (Default)  
+This sets the connections string to RabbitMQ  
+The application sends a Json to a queue called "messages" each time a POST request is made on /posts
 
 ---
 
