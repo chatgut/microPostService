@@ -1,23 +1,28 @@
 use lapin::{ConnectionProperties, Connection, Queue, types::FieldTable, BasicProperties, Channel};
 use lapin::options::*;
 use rocket::serde::json;
-use rocket::serde::json::Json;
-use rocket::serde::json::serde_json::json;
 use crate::models::message::Message;
 
-pub struct RabbitConnection(pub Connection);
-
+pub struct RabbitConnection {
+    pub connection: Connection,
+    pub channel: Channel,
+    pub queue: Queue,
+}
 
 impl RabbitConnection {
-    pub async fn init() -> Self {
+    pub async fn init() -> RabbitConnection {
+        let connection = Connection::connect("amqp://localhost:5672",
+                                             ConnectionProperties::default())
+            .await.expect("Could not connect to RabbitMQ");
+        let channel = connection.create_channel().await.expect("Could not create channel");
+        let queue = Self::create_queue(&channel).await;
         Self {
-            0: Connection::connect("amqp://localhost:5672",
-                                   ConnectionProperties::default())
-                .await.expect("Could not connect to RabbitMQ")
+            connection,
+            channel,
+            queue,
         }
     }
-
-    pub async fn create_channel(connection: &Self, channel: &Channel) -> Queue {
+    async fn create_queue(channel: &Channel) -> Queue {
         channel.queue_declare(
             "messages",
             QueueDeclareOptions::default(),
@@ -25,20 +30,11 @@ impl RabbitConnection {
             .await.expect("Could not create queue")
     }
 
-   pub async fn publish_message(rabbit: &Channel, message: &Message) {
+    pub async fn publish_message(rabbit: &Channel, message: &Message) {
         rabbit.basic_publish("",
                              "messages",
                              BasicPublishOptions::default(),
                              json::serde_json::to_string_pretty(&message).unwrap().as_bytes(),
-                             BasicProperties::default(), ).await.expect("Failed to publish").await.expect("Npe");
+                             BasicProperties::default(), ).await.expect("Failed to publish");
     }
-
 }
-
-// impl Poolable for RabbitConnection{
-//     type Manager = (RabbitConnection::Connection::Ma);
-//     type Error = ();
-//
-//     fn pool(config: DatabaseConfig) -> Result<Pool<Self::Manager>, Self::Error> {
-//         todo!()
-//     }

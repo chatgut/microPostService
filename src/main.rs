@@ -1,9 +1,6 @@
 #[macro_use]
 extern crate rocket;
 
-use std::future::Future;
-use lapin::{ConnectionProperties, Connection, Queue, types::FieldTable, BasicProperties, Channel};
-use lapin::options::*;
 use micro_post_service::db_connection::MessagesDatabase;
 use micro_post_service::endpoints::chat::get_chat_messages;
 use micro_post_service::endpoints::conversations::get_conversations;

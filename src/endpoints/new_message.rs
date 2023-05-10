@@ -6,9 +6,6 @@ use rocket_db_pools::Connection;
 use crate::models::message::Message;
 use rocket::serde::json::Json;
 use rocket::State;
-use rocket_db_pools::mongodb::bson;
-use rocket_db_pools::mongodb::bson::Bson;
-use serde::Serialize;
 use crate::connections::rabbitmq::RabbitConnection;
 
 use crate::models::new_message::NewMessage;
@@ -19,7 +16,7 @@ pub async fn new_message(
     db: Connection<MessagesDatabase>,
     new_message: Json<NewMessage>,
     user_id: UserID,
-    rabbit: &State<RabbitConnection>,
+    rabbitmq: &State<RabbitConnection>,
 ) -> Result<Created<Json<Message>>, Status> {
     let mut message = Message::new(new_message.into_inner(), user_id);
     let added_message = db
@@ -33,10 +30,8 @@ pub async fn new_message(
     message.id = added_message.inserted_id.as_object_id();
 
 
-    let channel = rabbit.0.create_channel().await.expect("Could not create channel");
-    let queue = RabbitConnection::create_channel(rabbit, &channel).await;
-    let publish = RabbitConnection::publish_message(&channel, &message).await;
-
+    //TODO Check connection and reconnect
+    RabbitConnection::publish_message(&rabbitmq.channel, &message).await;
 
     Ok(Created::new(format!(
         "/posts/{}",
