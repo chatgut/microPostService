@@ -1,4 +1,4 @@
-pub mod db_connection;
+pub mod connections;
 pub mod endpoints;
 pub mod models;
 

@@ -1,34 +1,32 @@
 use crate::common::helpers::*;
-use rocket::http::{Header, Status};
+use rocket::http::Status;
 use testcontainers::clients;
 use testcontainers::images::mongo::Mongo;
 
 mod common;
 
 #[rocket::async_test]
-async fn get_by_id_with_invalid_id_returns_204() {
-    let server = create_test_rocket(123).await;
-
-    let response = server
-        .get("/posts/234")
-        .header(Header::new("userID", " "))
-        .dispatch()
-        .await;
-    assert_eq!(response.status(), Status::NotFound)
-}
-
-#[rocket::async_test]
-async fn get_by_id_with_valid_id_returns_200() {
+async fn delete_message() {
     let docker = clients::Cli::docker();
     let node = docker.run(Mongo);
 
     let mongo_port = node.get_host_port_ipv4(27017);
     let server = create_test_rocket(mongo_port).await;
 
-    let message = insert_test_message(&server, 2.to_string(), 1.to_string()).await;
+    let message = insert_test_message(&server, 1.to_string(), 2.to_string()).await;
 
     let get_by_id = get_message_by_id(&server, get_message_location(&message), 1.to_string()).await;
 
+    let delete = server
+        .delete(get_message_location(&message))
+        .dispatch()
+        .await;
+
+    let get_message_again =
+        get_message_by_id(&server, get_message_location(&message), 1.to_string()).await;
+
     assert_eq!(message.status(), Status::Created);
     assert_eq!(get_by_id.status(), Status::Ok);
+    assert_eq!(delete.status(), Status::Ok);
+    assert_eq!(get_message_again.status(), Status::NoContent);
 }
