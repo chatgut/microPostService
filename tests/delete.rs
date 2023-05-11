@@ -2,16 +2,19 @@ use crate::common::helpers::*;
 use rocket::http::Status;
 use testcontainers::clients;
 use testcontainers::images::mongo::Mongo;
+use testcontainers::images::rabbitmq::RabbitMq;
 
 mod common;
 
 #[rocket::async_test]
 async fn delete_message() {
     let docker = clients::Cli::docker();
-    let node = docker.run(Mongo);
+    let mongo = docker.run(Mongo);
+    let rabbit = docker.run(RabbitMq);
 
-    let mongo_port = node.get_host_port_ipv4(27017);
-    let server = create_test_rocket(mongo_port).await;
+    let mongo_port = mongo.get_host_port_ipv4(27017);
+    let rabbit_port = rabbit.get_host_port_ipv4(5672);
+    let server = create_test_rocket(mongo_port, rabbit_port).await;
 
     let message = insert_test_message(&server, 1.to_string(), 2.to_string()).await;
 
