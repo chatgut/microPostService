@@ -2,17 +2,15 @@ version: '3.8'
 
 services:
   app:
-    image: microtest
+    image: ghcr.io/chatgut/micropostservice:main
     container_name: postService
     depends_on:
       - mongodb
-#      - rabbitMQ
+      - rabbitMQ
     environment:
       ROCKET_DATABASES: '{postservice={url="mongodb://dbMongoDB:27017"}}'
-#      RABBIT_HOST: QueueRabbitMQ
-#      RABBIT_PORT: 5672
-#      RABBIT_USER: guest
-#      RABBIT_PASS: guest
+      ROCKET_RABBIT_HOST: "amqp://QueueRabbitMQ:5672"
+
     ports:
       - "8000:8000"
 
@@ -24,14 +22,14 @@ services:
     ports:
       - "27017:27017"
 
-#  rabbitMQ:
-#    image: 'rabbitmq:3-management'
-#    container_name: QueueRabbitMQ
-#    volumes:
-#      - dbData:/var/lib/rabbitmq
-#    ports:
-#      - "15672:15672"
-#      - "5672:5672"
+  rabbitMQ:
+    image: 'rabbitmq:3-management'
+    container_name: QueueRabbitMQ
+    volumes:
+      - dbData:/var/lib/rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
 
 volumes:
   dbData:

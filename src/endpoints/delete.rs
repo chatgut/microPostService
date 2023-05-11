@@ -13,7 +13,7 @@ pub async fn delete(
 ) -> Result<Json<u64>, Status> {
     let message = db.database("postservice")
         .collection::<Message>("messages")
-        .delete_one(doc! {"id": id.as_ref()}, None)
+        .delete_one(doc! {"_id": id.as_ref()}, None)
         .await;
 
     match message {
