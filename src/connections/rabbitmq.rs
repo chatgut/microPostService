@@ -2,7 +2,6 @@ use crate::models::message::Message;
 use lapin::options::*;
 use lapin::{types::FieldTable, BasicProperties, Channel, Connection, ConnectionProperties, Queue};
 use rocket::serde::json;
-use rocket::{Config, Rocket};
 
 pub struct RabbitConnection {
     pub connection: Connection,

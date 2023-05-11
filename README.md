@@ -24,6 +24,15 @@ Saves to MongoDB.
 - Sends the message to RabbitMQ queue called "messages"
 
 ---
+
+**DELETE:**
+
+*/posts/"id"*
+
+* Deletes requested message
+
+
+---
 **GET:**
 
 */health_check*  
