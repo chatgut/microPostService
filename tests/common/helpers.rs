@@ -1,14 +1,15 @@
-use micro_post_service::connections::rabbitmq::RabbitConnection;
 use micro_post_service::connections::db_connection::MessagesDatabase;
+use micro_post_service::connections::rabbitmq::RabbitConnection;
 use micro_post_service::endpoints::new_message::rocket_uri_macro_new_message;
 use rocket::http::Header;
 use rocket::local::asynchronous::{Client, LocalResponse};
 use rocket::{routes, uri};
 use rocket_db_pools::{Config, Database};
 
-use micro_post_service::endpoints::get_chat::get_chat_messages;
 use micro_post_service::endpoints::conversations::get_conversations;
+use micro_post_service::endpoints::delete::delete;
 use micro_post_service::endpoints::get_by_id::get_by_id;
+use micro_post_service::endpoints::get_chat::get_chat_messages;
 use micro_post_service::endpoints::health_check::health_check;
 use micro_post_service::endpoints::new_message::new_message;
 use micro_post_service::models::new_message::NewMessage;
@@ -35,7 +36,8 @@ pub async fn create_test_rocket(db_port: u16) -> Client {
                 new_message,
                 get_by_id,
                 get_chat_messages,
-                get_conversations
+                get_conversations,
+                delete
             ],
         );
 

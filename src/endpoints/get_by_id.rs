@@ -15,9 +15,10 @@ pub async fn get_by_id(
         .database("postservice")
         .collection::<Message>("messages")
         .find_one(doc! {"_id": id.as_ref()}, None)
-        .await;
+        .await
+        .expect("Message not found");
     match message {
-        Ok(message) => Ok(Json(message.expect("Message not found"))),
-        Err(_) => Err(Status::NoContent),
+        Some(message) => Ok(Json(message)),
+        None => Err(Status::NoContent),
     }
 }
