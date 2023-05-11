@@ -4,6 +4,7 @@ services:
   app:
     image: ghcr.io/chatgut/micropostservice:main
     container_name: postService
+    restart: on-failure
     depends_on:
       - mongodb
       - rabbitMQ
