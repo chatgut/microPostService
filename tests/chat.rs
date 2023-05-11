@@ -1,6 +1,6 @@
 mod common;
 
-use crate::common::helpers::{create_test_rocket, insert_test_message};
+use crate::common::helpers::*;
 use rocket::http::{Header, Status};
 use testcontainers::clients;
 use testcontainers::images::mongo::Mongo;
@@ -35,13 +35,9 @@ async fn chat_returns_200_when_getting_inserted_messages_with_query() {
     let second_message = insert_test_message(&server, 2.to_string(), 1.to_string()).await;
     let third_message = insert_test_message(&server, 2.to_string(), 1.to_string()).await;
 
-    let first_message_header = first_message
-        .headers()
-        .get("location")
-        .next()
-        .expect("Response didnt return location header");
-
-    let split_header: Vec<&str> = first_message_header.split("/posts/").collect();
+    let split_header: Vec<&str> = get_message_location(&first_message)
+        .split("/posts/")
+        .collect();
 
     let get_message = server
         .get(format!(

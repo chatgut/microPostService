@@ -1,4 +1,4 @@
-use crate::common::helpers::{create_test_rocket, insert_test_message};
+use crate::common::helpers::*;
 use rocket::http::{Header, Status};
 use testcontainers::clients;
 use testcontainers::images::mongo::Mongo;
@@ -25,19 +25,10 @@ async fn get_by_id_with_valid_id_returns_200() {
     let mongo_port = node.get_host_port_ipv4(27017);
     let server = create_test_rocket(mongo_port).await;
 
-    let insert_response = insert_test_message(&server, 2.to_string(), 1.to_string()).await;
-    let id = insert_response
-        .headers()
-        .get("location")
-        .next()
-        .expect("Response didnt return location header");
+    let message = insert_test_message(&server, 2.to_string(), 1.to_string()).await;
 
-    let get_by_id = server
-        .get(id)
-        .header(Header::new("userID", "1"))
-        .dispatch()
-        .await;
+    let get_by_id = get_message_by_id(&server, get_message_location(&message), 1.to_string()).await;
 
-    assert_eq!(insert_response.status(), Status::Created);
+    assert_eq!(message.status(), Status::Created);
     assert_eq!(get_by_id.status(), Status::Ok);
 }

@@ -63,3 +63,22 @@ pub fn test_message(to: String) -> NewMessage {
         message: "Test message".to_string(),
     }
 }
+
+pub fn get_message_location<'a>(response: &'a LocalResponse) -> &'a str {
+    response
+        .headers()
+        .get("location")
+        .next()
+        .expect("Response didnt return location header")
+}
+pub async fn get_message_by_id<'a>(
+    server: &'a Client,
+    location: &'a str,
+    from: String,
+) -> LocalResponse<'a> {
+    server
+        .get(location)
+        .header(Header::new("userID", from))
+        .dispatch()
+        .await
+}
