@@ -58,5 +58,4 @@ impl RabbitConnection {
             .await
             .expect("Failed to publish");
     }
-    }
 }
